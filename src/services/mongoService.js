@@ -7,23 +7,36 @@
 
 const { ObjectId } = require("mongodb");
 
-// Retrieves a document by its ID from the specified collection.
+// Retrieves a document by its ID.
 async function findOneById(collection, id) {
-  return await collection.findOne({ _id: new ObjectId(id) });
+  return await collection.findOne({ _id: new ObjectId(`${id}`) });  // ObjectId() expects a string as an argument , ObjectId(number) is deprecated
 }
 
-// Retrieves all documents from the specified collection.
+// Retrieves all documents.
 async function findAll(collection) {
   return await collection.find().toArray();
 }
 
-// Creates a new document in the specified collection.
+// Creates a new document.
 async function createDocument(collection, document) {
   return await collection.insertOne(document);
 }
+
+// Updates an existing document.
+async function updateDocument(collection, id, update) {
+  return await collection.updateOne({ _id: new ObjectId(`${id}`) }, { $set: update }, { returnDocument: "after" });
+}
+
+// Deletes a document by its ID.
+async function deleteDocument(collection, id) {
+  return await collection.deleteOne({ _id: new ObjectId(`${id}`) });
+}
+
 
 module.exports = {
   findOneById,
   findAll,
   createDocument,
+  updateDocument,
+  deleteDocument
 };

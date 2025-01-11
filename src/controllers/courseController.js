@@ -5,7 +5,6 @@
 // Réponse : Séparer la logique métier des routes permet de rendre le code plus modulaire, réutilisable et maintenable. Cela facilite également la gestion des dépendances, la répartition des tâches entre les différents modules et la mise à l'échelle de l'application. En séparant la logique métier des routes, on peut également tester plus facilement les différentes parties de l'application de manière isolée. Par exemple, les tests unitaires peuvent se concentrer sur la logique métier dans les contrôleurs sans avoir à se soucier des détails de la gestion des requêtes HTTP. De plus, cela permet de suivre le principe de responsabilité unique, où chaque module a une responsabilité clairement définie.
 
 
-const express = require("express");
 const { ObjectId } = require("mongodb");
 const { getDb } = require("../config/db");
 const mongoService = require("../services/mongoService");
@@ -142,21 +141,17 @@ async function modifyCourse(req, res) {
       return;
     }
 
-    const updatedCourse = await getDb().collection("courses").findOneAndUpdate(
-      { _id: new ObjectId(id) },
-      {
-        $set: {
-          title,
-          description,
-          category,
-          instructor,
-          startDate : new Date(startDate),
-          endDate : new Date(endDate),
-          updatedAt: new Date(),
-        },
-      },
-      { returnDocument: "after" }
-    );
+    const update = {
+      title,
+      description,
+      category,
+      instructor,
+      startDate: new Date(startDate),
+      endDate: new Date(endDate),
+      updatedAt: new Date(),
+    };
+
+    const updatedCourse = await mongoService.updateDocument(getDb().collection("courses"),id, update);
 
     res
       .status(200)
@@ -187,9 +182,9 @@ async function deleteCourse(req, res) {
       return;
     }
 
-    await getDb().collection("courses").deleteOne({ _id: new ObjectId(id) });
+    await mongoService.deleteDocument(getDb().collection("courses"), id);
 
-    res.status(204).json({ message: "Course deleted successfully." });
+    res.status(200).json({ message: "Course deleted successfully." });
   } catch (error) {
     console.error("Error deleting course:", error);
     res.status(500).json({ error: "Internal Server Error." });
