@@ -1,5 +1,3 @@
-const redis = require('redis');
-
 // Question : Comment gérer efficacement le cache avec Redis ?
 // Réponse : Pour gérer efficacement le cache avec Redis, il est important de suivre certaines bonnes pratiques :
 // 1. Utiliser des TTL (Time To Live) pour s'assurer que les données expirent et ne restent pas indéfiniment dans le cache.
