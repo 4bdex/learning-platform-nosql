@@ -5,8 +5,8 @@ const mongoService = require("../services/mongoService");
 const redisService = require("../services/redisService");
 
 const CACHE_KEYS = {
-    ALL_STUDENTS: process.env.REDIS_KEY_ALL_STUDENTS || "all_students",
-    STUDENT_STATS: process.env.REDIS_KEY_STUDENT_STATS || "student_stats",
+    ALL_STUDENTS: process.env.REDIS_KEY_ALL_STUDENTS || "student:all",
+    STUDENT_STATS: process.env.REDIS_KEY_STUDENT_STATS || "stats:students",
     STUDENT_PREFIX: process.env.REDIS_KEY_STUDENT_PREFIX || "student:",
 };
 

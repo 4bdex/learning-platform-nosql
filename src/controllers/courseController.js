@@ -12,9 +12,9 @@ const mongoService = require("../services/mongoService");
 const redisService = require("../services/redisService");
 
 const CACHE_KEYS = {
-  ALL_COURSES: process.env.REDIS_KEY_ALL_COURSES || "all_courses",
+  ALL_COURSES: process.env.REDIS_KEY_ALL_COURSES || "course:all",
   COURSE_PREFIX: process.env.REDIS_KEY_COURSE_PREFIX || "course:",
-  STATS: process.env.REDIS_KEY_COURSE_STATS || "course_stats",
+  STATS: process.env.REDIS_KEY_COURSE_STATS || "stats:courses",
 };
 
 
@@ -58,7 +58,7 @@ async function createCourse(req, res) {
 async function getAllCourses(req, res) {
   try {
     const cachedCourses = await redisService.getCachedData(CACHE_KEYS.ALL_COURSES);
-
+    // check if cached data exists
     if (cachedCourses) {
       return res.status(200).json({
         message: "Courses retrieved successfully from cache.",
@@ -73,7 +73,7 @@ async function getAllCourses(req, res) {
       return res.status(404).json({ message: "No courses found." });
     }
 
-    // Cache the courses with a TTL of 1 hour
+    // Cache all courses
     await redisService.cacheData(CACHE_KEYS.ALL_COURSES, JSON.stringify(courses));
 
     res.status(200).json({
@@ -99,6 +99,7 @@ async function getCourse(req, res) {
     const cacheKey = redisService.getCachedData(id);
     const cachedCourse = await redisService.getCachedData(cacheKey);
 
+    // Check if cached data exists
     if (cachedCourse) {
       return res.status(200).json({
         message: "Course retrieved successfully from cache.",
@@ -112,7 +113,7 @@ async function getCourse(req, res) {
       return res.status(404).json({ error: "Course not found." });
     }
 
-    // Cache the course with a TTL of 1 hour
+    // Cache the course
     await redisService.cacheData(cacheKey, JSON.stringify(course));
 
     res.status(200).json({ message: "Course retrieved successfully.", data: course });
@@ -199,7 +200,7 @@ async function deleteCourse(req, res) {
 async function getCourseStats(req, res) {
   try {
     const cachedStats = await redisService.getCachedData(CACHE_KEYS.STATS);
-
+    // Check if cached data exists
     if (cachedStats) {
       return res.status(200).json({
         message: "Course statistics retrieved successfully from cache.",
@@ -215,10 +216,11 @@ async function getCourseStats(req, res) {
 
     const stats = {
       totalCourses: courses.length,
-      // Additional stats can be calculated here
+      totalCategories: new Set(courses.map((course) => course.category)).size,
+      totalInstructors: new Set(courses.map((course) => course.instructor)).size,
     };
 
-    // Cache the stats with a TTL of 1 hour
+    // Cache the stats
     await redisService.cacheData(CACHE_KEYS.STATS, JSON.stringify(stats));
 
     res.status(200).json({ message: "Course statistics retrieved successfully.", data: stats });
