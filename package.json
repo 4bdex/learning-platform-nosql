@@ -11,12 +11,15 @@
     "Redis",
     "GLSID, II-BDCC, II-CCN"
   ],
-  "author": "Abdelaziz DAAIF",
+  "author": "EL-HADRY Abderrazzak",
   "license": "ISC",
   "dependencies": {
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "mongodb": "^6.12.0",
     "redis": "^4.7.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
   }
 }
