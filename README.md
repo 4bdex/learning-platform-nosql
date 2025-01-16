@@ -97,9 +97,6 @@ src/
 
 ---
 
-## Choix techniques
----
-
 ## **Choix Techniques**
 ### **Stratégie de Caching**
 
